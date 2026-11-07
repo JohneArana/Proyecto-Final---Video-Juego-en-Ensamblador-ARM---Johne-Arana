@@ -1,0 +1,186 @@
+
+Discarded input sections
+
+ .ARM.attributes
+                0x00000000       0x22 build/startup.o
+ .ARM.attributes
+                0x00000000       0x22 build/timer.o
+ .ARM.attributes
+                0x00000000       0x22 build/inputs.o
+ .ARM.attributes
+                0x00000000       0x22 build/video.o
+ .ARM.attributes
+                0x00000000       0x22 build/font.o
+ .ARM.attributes
+                0x00000000       0x22 build/game.o
+ .ARM.attributes
+                0x00000000       0x22 build/main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+RAM              0x20000000         0x00042000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+
+.text           0x20000000      0x8a8
+ *(.vectors)
+ .vectors       0x20000000       0xc0 build/startup.o
+                0x20000000                vector_table
+ *(.text*)
+ .text          0x200000c0       0xa0 build/startup.o
+                0x200000c0                reset_handler
+                0x200000f4                default_handler
+                0x200000f6                clocks_init
+                0x20000140                resets_init
+ .text          0x20000160       0x88 build/timer.o
+                0x20000160                timer_start
+                0x20000198                timer_stop
+                0x200001c4                timer_isr
+ .text          0x200001e8       0xc0 build/inputs.o
+                0x200001e8                inputs_init
+                0x20000234                adc_read
+                0x20000258                input_axis
+                0x20000280                input_button_pressed
+                0x20000294                input_wait_press
+ .text          0x200002a8      0x1ec build/video.o
+                0x200002a8                i2c_init
+                0x200002f4                i2c_write
+                0x20000318                oled_cmds
+                0x2000034c                oled_init
+                0x2000035c                oled_flush
+                0x200003a0                fb_clear
+                0x200003b8                fb_draw_sprite
+                0x200003f8                fb_draw_char
+                0x20000430                fb_draw_text
+                0x2000044e                fb_draw_number3
+ .text          0x20000494        0x0 build/font.o
+ .text          0x20000494      0x23c build/game.o
+                0x20000494                rng_next
+                0x200004ac                enemy_respawn
+                0x200004f4                game_reset
+                0x2000052c                game_update
+                0x200005d0                game_draw
+                0x20000644                draw_menu
+                0x20000688                draw_gameover
+ .text          0x200006d0       0x58 build/main.o
+                0x200006d0                main
+                0x20000728                        . = ALIGN (0x4)
+ *(.rodata*)
+ .rodata        0x20000728       0x1f build/video.o
+ .rodata        0x20000747      0x127 build/font.o
+                0x20000747                font5x7
+ .rodata        0x2000086e       0x37 build/game.o
+                0x200008a8                        . = ALIGN (0x4)
+ *fill*         0x200008a5        0x3 
+
+.data           0x200008a8        0x0
+ .data          0x200008a8        0x0 build/startup.o
+ .data          0x200008a8        0x0 build/timer.o
+ .data          0x200008a8        0x0 build/inputs.o
+ .data          0x200008a8        0x0 build/video.o
+ .data          0x200008a8        0x0 build/font.o
+ .data          0x200008a8        0x0 build/game.o
+ .data          0x200008a8        0x0 build/main.o
+
+.igot.plt       0x200008a8        0x0
+ .igot.plt      0x200008a8        0x0 build/startup.o
+
+.glue_7         0x200008a8        0x0
+ .glue_7        0x200008a8        0x0 linker stubs
+
+.glue_7t        0x200008a8        0x0
+ .glue_7t       0x200008a8        0x0 linker stubs
+
+.vfp11_veneer   0x200008a8        0x0
+ .vfp11_veneer  0x200008a8        0x0 linker stubs
+
+.v4_bx          0x200008a8        0x0
+ .v4_bx         0x200008a8        0x0 linker stubs
+
+.iplt           0x200008a8        0x0
+ .iplt          0x200008a8        0x0 build/startup.o
+
+.rel.dyn        0x200008a8        0x0
+ .rel.iplt      0x200008a8        0x0 build/startup.o
+
+.bss            0x200008a8      0x4cc
+                0x200008a8                        . = ALIGN (0x4)
+                0x200008a8                        __bss_start = .
+ *(.bss*)
+ .bss           0x200008a8        0x0 build/startup.o
+ .bss           0x200008a8        0x4 build/timer.o
+                0x200008a8                frame_flag
+ .bss           0x200008ac        0x0 build/inputs.o
+ .bss           0x200008ac      0x480 build/video.o
+                0x200008ac                framebuffer
+ .bss           0x20000d2c        0x0 build/font.o
+ .bss           0x20000d2c       0x48 build/game.o
+                0x20000d2c                game_vars
+ .bss           0x20000d74        0x0 build/main.o
+ *(COMMON)
+                0x20000d74                        . = ALIGN (0x4)
+                0x20000d74                        __bss_end = .
+
+/DISCARD/
+ *(.ARM.exidx*)
+ *(.comment)
+ *(.ARM.attributes)
+LOAD build/startup.o
+LOAD build/timer.o
+LOAD build/inputs.o
+LOAD build/video.o
+LOAD build/font.o
+LOAD build/game.o
+LOAD build/main.o
+OUTPUT(build/juego.elf elf32-littlearm)
+LOAD linker stubs
+
+.debug_line     0x00000000      0x458
+ .debug_line    0x00000000       0x84 build/startup.o
+ .debug_line    0x00000084       0x73 build/timer.o
+ .debug_line    0x000000f7       0x96 build/inputs.o
+ .debug_line    0x0000018d      0x131 build/video.o
+ .debug_line    0x000002be      0x145 build/game.o
+ .debug_line    0x00000403       0x55 build/main.o
+
+.debug_info     0x00000000       0xe4
+ .debug_info    0x00000000       0x26 build/startup.o
+ .debug_info    0x00000026       0x26 build/timer.o
+ .debug_info    0x0000004c       0x26 build/inputs.o
+ .debug_info    0x00000072       0x26 build/video.o
+ .debug_info    0x00000098       0x26 build/game.o
+ .debug_info    0x000000be       0x26 build/main.o
+
+.debug_abbrev   0x00000000       0x78
+ .debug_abbrev  0x00000000       0x14 build/startup.o
+ .debug_abbrev  0x00000014       0x14 build/timer.o
+ .debug_abbrev  0x00000028       0x14 build/inputs.o
+ .debug_abbrev  0x0000003c       0x14 build/video.o
+ .debug_abbrev  0x00000050       0x14 build/game.o
+ .debug_abbrev  0x00000064       0x14 build/main.o
+
+.debug_aranges  0x00000000       0xc0
+ .debug_aranges
+                0x00000000       0x20 build/startup.o
+ .debug_aranges
+                0x00000020       0x20 build/timer.o
+ .debug_aranges
+                0x00000040       0x20 build/inputs.o
+ .debug_aranges
+                0x00000060       0x20 build/video.o
+ .debug_aranges
+                0x00000080       0x20 build/game.o
+ .debug_aranges
+                0x000000a0       0x20 build/main.o
+
+.debug_str      0x00000000       0x6d
+ .debug_str     0x00000000       0x6d build/startup.o
+                                 0x32 (size before relaxing)
+ .debug_str     0x0000006d       0x30 build/timer.o
+ .debug_str     0x0000006d       0x31 build/inputs.o
+ .debug_str     0x0000006d       0x30 build/video.o
+ .debug_str     0x0000006d       0x2f build/game.o
+ .debug_str     0x0000006d       0x2f build/main.o

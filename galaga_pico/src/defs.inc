@@ -47,8 +47,10 @@
 .ifndef BTN_FALLBACK
 .equ BTN_FALLBACK,    0               @ 1 = empujar la palanca a la izquierda cuenta como botón Z
 .endif
-.equ INVERT_X,        0               @ pon 1 si el joystick mueve al revés
-.equ INVERT_Y,        0
+.equ SWAP_XY,         1               @ 1 = joystick girado 90 grados (intercambia ejes)
+.equ INVERT_X,        0               @ pon 1 si el movimiento horizontal sale al revés
+.equ INVERT_Y,        1               @ pon 0 si el movimiento vertical sale al revés
+.equ MOVE_THRESH,     1000            @ desviación del ADC (de 2048) que cuenta como "mover la palanca"
 
 @ --- Estados de la máquina de estados ---------------------------------------------
 .equ ST_MENU,         0

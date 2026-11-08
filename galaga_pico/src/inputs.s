@@ -112,3 +112,49 @@ func input_wait_press
     cmp  r0, #0
     beq  2b
     pop  {pc}
+    .ltorg
+
+@ input_moved: r0 = 1 si la palanca esta empujada (cualquier eje) mas alla de
+@ MOVE_THRESH desde el centro (2048); 0 si esta en reposo. Preserva r4.
+func input_moved
+    push {r4, lr}
+    movs r0, #0
+    bl   adc_read                             @ eje del canal 0
+    bl   dev_big
+    movs r4, r0
+    movs r0, #1
+    bl   adc_read                             @ eje del canal 1
+    bl   dev_big
+    orrs r0, r0, r4
+    pop  {r4, pc}
+    .ltorg
+
+@ dev_big (interna): r0 = lectura ADC -> r0 = 1 si |r0 - 2048| > MOVE_THRESH
+func dev_big
+    ldr  r1, =2048
+    subs r0, r0, r1
+    bpl  1f
+    negs r0, r0                               @ valor absoluto
+1:  ldr  r1, =MOVE_THRESH
+    cmp  r0, r1
+    bhi  2f
+    movs r0, #0
+    bx   lr
+2:  movs r0, #1
+    bx   lr
+    .ltorg
+
+@ input_wait_move: espera a que la palanca vuelva al centro y luego a que se
+@ mueva. Reemplaza al boton Z para iniciar / reiniciar la partida.
+func input_wait_move
+    push {lr}
+1:  bl   led_heartbeat
+    bl   input_moved
+    cmp  r0, #0
+    bne  1b                                   @ aun empujada: esperar a soltar
+2:  bl   led_heartbeat
+    bl   input_moved
+    cmp  r0, #0
+    beq  2b                                   @ en reposo: esperar movimiento
+    pop  {pc}
+    .ltorg

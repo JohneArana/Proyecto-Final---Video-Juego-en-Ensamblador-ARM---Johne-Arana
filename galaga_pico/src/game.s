@@ -1,5 +1,5 @@
 @ ============================================================================
-@ game.s - Lógica de "METEOROS": nave controlada por joystick (ejes X/Y) que
+@ game.s - Lógica de "GALAGA": nave controlada por joystick (ejes X/Y) que
 @ esquiva 4 meteoros que caen solos. Colisión AABB, 3 vidas, puntos por cada
 @ meteoro esquivado, dificultad creciente, HUD y pantallas de menú / Game Over.
 @ ============================================================================
@@ -15,8 +15,8 @@ spr_player: .byte 0xE0,0x70,0x3C,0x7F,0x7F,0x3C,0x70,0xE0
 spr_enemy:  .byte 0x3C,0x7E,0xEF,0xFB,0xFF,0xF7,0x7E,0x3C
 str_pts:    .asciz "PTS:"
 str_vidas:  .asciz "VIDAS:"
-str_title:  .asciz "METEOROS"
-str_press:  .asciz "PULSA Z"
+str_title:  .asciz "GALAGA"
+str_press:  .asciz "MUEVE LA PALANCA"
 str_over:   .asciz "GAME OVER"
 
 .text
@@ -104,8 +104,12 @@ func game_reset
 func game_update
     push {r4-r6, lr}
     ldr  r4, =game_vars
-    @ ---- nave: eje X (canal 0) ----
+    @ ---- nave: eje X (canal 1 si el joystick esta girado) ----
+.if SWAP_XY
+    movs r0, #1
+.else
     movs r0, #0
+.endif
     bl   input_axis
 .if INVERT_X
     negs r0, r0
@@ -119,8 +123,12 @@ func game_update
     ble  2f
     movs r1, #120
 2:  str  r1, [r4, #G_PX]
-    @ ---- nave: eje Y (canal 1) ----
+    @ ---- nave: eje Y (canal 0 si el joystick esta girado) ----
+.if SWAP_XY
+    movs r0, #0
+.else
     movs r0, #1
+.endif
     bl   input_axis
 .if INVERT_Y
     negs r0, r0
@@ -240,7 +248,7 @@ func game_draw
 func draw_menu
     push {lr}
     bl   fb_clear
-    movs r0, #40
+    movs r0, #46
     movs r1, #1
     ldr  r2, =str_title
     bl   fb_draw_text
@@ -252,7 +260,7 @@ func draw_menu
     movs r1, #32
     ldr  r2, =spr_enemy
     bl   fb_draw_sprite
-    movs r0, #43
+    movs r0, #16
     movs r1, #6
     ldr  r2, =str_press
     bl   fb_draw_text
@@ -277,7 +285,7 @@ func draw_gameover
     movs r1, #3
     ldr  r2, [r4, #G_SCORE]
     bl   fb_draw_number3
-    movs r0, #43
+    movs r0, #16
     movs r1, #6
     ldr  r2, =str_press
     bl   fb_draw_text

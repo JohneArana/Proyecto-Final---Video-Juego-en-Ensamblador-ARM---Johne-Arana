@@ -1,8 +1,8 @@
 @ ============================================================================
-@ main.s - Máquina de estados:  MENU -> JUEGO -> GAME OVER -> JUEGO ...
-@   MENU : pantalla estática, espera botón Z (timer apagado)
+@ main.s (GALAGA) - Máquina de estados:  MENU -> JUEGO -> GAME OVER -> JUEGO ...
+@   MENU : pantalla estática, espera mover la palanca (timer apagado)
 @   JUEGO: cada tick del timer (30 FPS) = leer joystick, física, dibujar, enviar
-@   OVER : timer detenido, pantalla final, espera Z y reinicia registros
+@   OVER : timer detenido, pantalla final, espera mover la palanca y reinicia registros
 @ ============================================================================
 .include "defs.inc"
 
@@ -14,7 +14,7 @@ func main
     bl   draw_menu               @ estado MENU (r0 = 0 si la OLED respondió)
     ldr  r1, =oled_status
     str  r0, [r1]
-    bl   input_wait_press        @ botón Z arranca el juego
+    bl   input_wait_move        @ mover la palanca arranca el juego
 restart:
     bl   game_reset              @ reinicio de registros de estado
     bl   timer_start             @ estado JUEGO: arranca el timer por hardware
@@ -39,6 +39,6 @@ go: movs r1, #0
 over:                            @ estado GAME OVER
     bl   timer_stop              @ detención total del timer de física
     bl   draw_gameover
-    bl   input_wait_press        @ Z reinicia
+    bl   input_wait_move        @ mover la palanca reinicia
     b    restart
     .ltorg

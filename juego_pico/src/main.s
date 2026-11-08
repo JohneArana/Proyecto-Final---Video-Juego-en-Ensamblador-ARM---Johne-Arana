@@ -11,7 +11,9 @@ func main
     bl   inputs_init
     bl   i2c_init
     bl   oled_init
-    bl   draw_menu               @ estado MENU
+    bl   draw_menu               @ estado MENU (r0 = 0 si la OLED respondió)
+    ldr  r1, =oled_status
+    str  r0, [r1]
     bl   input_wait_press        @ botón Z arranca el juego
 restart:
     bl   game_reset              @ reinicio de registros de estado

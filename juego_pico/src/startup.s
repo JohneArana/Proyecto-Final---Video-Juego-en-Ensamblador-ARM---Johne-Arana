@@ -43,7 +43,12 @@ func reset_handler
 2:  ldr  r0, =SCB_VTOR
     ldr  r1, =vector_table
     str  r1, [r0]
-    bl   clocks_init
+    ldr  r0, =RESET_IO           @ 1) solo IO y pads (no dependen de relojes nuevos)
+    bl   resets_init
+    bl   led_init
+    bl   led_on                  @ LED fijo = el código arrancó
+    bl   clocks_init             @ 2) XOSC, clk_adc y tick de 1 us
+    ldr  r0, =RESET_MASK         @ 3) ahora sí ADC, I2C0, TIMER (necesitan reloj)
     bl   resets_init
     bl   main                    @ no retorna
 3:  b    3b
@@ -87,11 +92,11 @@ func clocks_init
     .ltorg
 
 @ ---------------------------------------------------------------------------
-@ resets_init: saca de reset ADC, I2C0, IO_BANK0, PADS_BANK0 y TIMER
+@ resets_init: saca de reset los bloques indicados y espera RESET_DONE
 @ ---------------------------------------------------------------------------
-func resets_init
+func resets_init                 @ r0 = máscara de bloques a sacar de reset
+    movs r1, r0
     ldr  r0, =RESETS_CLR
-    ldr  r1, =RESET_MASK
     str  r1, [r0]
     ldr  r0, =RESETS_BASE
 1:  ldr  r2, [r0, #0x08]         @ RESET_DONE

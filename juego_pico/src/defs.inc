@@ -38,11 +38,15 @@
 
 @ --- Bits de RESETS: ADC(0) I2C0(3) IO_BANK0(5) PADS_BANK0(8) TIMER(21) -------
 .equ RESET_MASK,      0x00200129
+.equ RESET_IO,        0x00000120      @ solo IO_BANK0(5) + PADS_BANK0(8)
 
 @ --- Parámetros del sistema -----------------------------------------------------
 .equ FRAME_US,        33333           @ periodo del timer: 30 FPS
 .equ OLED_ADDR,       0x3C            @ dirección I2C del SSD1306
 .equ INV_FRAMES,      45              @ frames de invulnerabilidad tras choque
+.ifndef BTN_FALLBACK
+.equ BTN_FALLBACK,    0               @ 1 = empujar la palanca a la izquierda cuenta como botón Z
+.endif
 .equ INVERT_X,        0               @ pon 1 si el joystick mueve al revés
 .equ INVERT_Y,        0
 

@@ -26,3 +26,9 @@ Resultado: `build/juego.uf2`.
 ## Módulos
 startup.s (vectores, reloj, resets) | timer.s (ALARM0 + NVIC) | inputs.s (ADC, botón) |
 video.s (I2C, SSD1306, framebuffer, sprites, texto) | font.s | game.s (lógica) | main.s (estados)
+
+## LED de diagnóstico (el LED verde integrado de la Pico, GP25)
+- Apagado siempre: el programa no arrancó (repetir la carga con BOOTSEL).
+- Encendido fijo: arrancó pero se detuvo antes del menú.
+- Parpadeo lento (~1 Hz): menú listo y la OLED respondió por I2C.
+- Parpadeo rápido (~8 Hz): la OLED NO respondió (revisar SDA, SCK, VDD, GND).

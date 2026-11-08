@@ -259,6 +259,23 @@ func fb_draw_number3
     pop  {r4-r7, pc}
     .ltorg
 
+@ fb_draw_number4: r0 = x, r1 = página, r2 = valor (0..9999), 4 dígitos
+func fb_draw_number4
+    push {r4-r7, lr}
+    movs r4, r0
+    movs r5, r1
+    movs r6, r2
+    ldr  r7, =1000
+    bl   num_digit
+    movs r7, #100
+    bl   num_digit
+    movs r7, #10
+    bl   num_digit
+    movs r7, #1
+    bl   num_digit
+    pop  {r4-r7, pc}
+    .ltorg
+
 @ num_digit (interna): r4 = x, r5 = página, r6 = resto, r7 = divisor
 @ No hay instrucción DIV en Cortex-M0+: se divide por restas sucesivas.
 .thumb_func

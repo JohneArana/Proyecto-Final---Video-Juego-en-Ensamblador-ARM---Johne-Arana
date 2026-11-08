@@ -71,23 +71,44 @@ func input_axis
     .ltorg
 
 @ input_button_pressed: r0 = 1 si el botón Z está pulsado (activo en bajo)
+@ Con BTN_FALLBACK=1 también cuenta la palanca empujada a tope a la izquierda
+@ (solo para emergencias si el pulsador del módulo no responde).
 func input_button_pressed
+.if BTN_FALLBACK
+    push {lr}
+.endif
     ldr  r1, =SIO_BASE
     ldr  r0, [r1, #4]                         @ GPIO_IN
     lsrs r0, r0, #22
     movs r1, #1
     ands r0, r0, r1
     eors r0, r0, r1                           @ invierte
+.if BTN_FALLBACK
+    cmp  r0, #0
+    bne  8f
+    movs r0, #0
+    bl   adc_read                             @ eje X
+    ldr  r1, =300
+    cmp  r0, r1
+    blo  7f
+    movs r0, #0
+    b    8f
+7:  movs r0, #1
+8:  pop  {pc}
+.else
     bx   lr
+.endif
     .ltorg
 
 @ input_wait_press: espera a soltar y luego a que se pulse el botón Z
 func input_wait_press
     push {lr}
-1:  bl   input_button_pressed
+1:  bl   led_heartbeat
+    bl   input_button_pressed
     cmp  r0, #0
     bne  1b
-2:  bl   input_button_pressed
+2:  bl   led_heartbeat
+    bl   input_button_pressed
     cmp  r0, #0
     beq  2b
     pop  {pc}
